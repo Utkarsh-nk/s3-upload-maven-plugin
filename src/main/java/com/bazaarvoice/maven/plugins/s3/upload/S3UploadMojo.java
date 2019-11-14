@@ -5,6 +5,7 @@ import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.internal.StaticCredentialsProvider;
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.Headers;
@@ -18,6 +19,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+
 
 import java.io.File;
 
@@ -54,6 +56,14 @@ public class S3UploadMojo extends AbstractMojo
   /** Force override of endpoint for S3 regions such as EU. */
   @Parameter(property = "s3-upload.endpoint")
   private String endpoint;
+  
+  /** The http client proxy host */
+  @Parameter(property = "proxy.host", defaultValue = "false")
+  private String proxyHost;
+  
+  /** The http client proxy port*/
+  @Parameter(property = "proxy.port", defaultValue = 80)
+  private int proxyPort;
 
   /** In the case of a directory upload, recursively upload the contents. */
   @Parameter(property = "s3-upload.recursive", defaultValue = "false")
@@ -100,8 +110,13 @@ public class S3UploadMojo extends AbstractMojo
     } else {
       provider = new DefaultAWSCredentialsProviderChain();
     }
-
-    return new AmazonS3Client(provider);
+    ClientConfiguration client_config =  new ClientConfiguration();
+    if (!proxyHost.equals("false")){
+      client_config.setProxyHost(proxyHost);
+      client_config.setProxyPort(proxyPort);
+    }
+    
+    return new AmazonS3Client(provider , client_config);
   }
 
   private boolean upload(AmazonS3 s3, File sourceFile) throws MojoExecutionException

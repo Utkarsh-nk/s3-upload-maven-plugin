@@ -76,7 +76,7 @@ public class S3UploadMojo extends AbstractMojo
       throw new MojoExecutionException("File/folder doesn't exist: " + source);
     }
 
-    AmazonS3 s3 = getS3Client(accessKey, secretKey);
+    AmazonS3 s3 = getS3Client(accessKey, secretKey , proxyHost , proxyPort);
     if (endpoint != null) {
       s3.setEndpoint(endpoint);
     }
@@ -101,7 +101,7 @@ public class S3UploadMojo extends AbstractMojo
             source, bucketName, destination));
   }
 
-  private static AmazonS3 getS3Client(String accessKey, String secretKey)
+  private static AmazonS3 getS3Client(String accessKey, String secretKey , String proxyHost , int proxyPort)
   {
     AWSCredentialsProvider provider;
     if (accessKey != null && secretKey != null) {

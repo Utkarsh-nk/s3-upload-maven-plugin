@@ -62,7 +62,7 @@ public class S3UploadMojo extends AbstractMojo
   private String proxyHost;
   
   /** The http client proxy port*/
-  @Parameter(property = "proxy.port", defaultValue = 80)
+  @Parameter(property = "proxy.port", defaultValue = "80")
   private int proxyPort;
 
   /** In the case of a directory upload, recursively upload the contents. */
